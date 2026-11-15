@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+**Vor der Arbeit `HANDOFF.md` lesen.** Sie beschreibt den Fork (Force-Laden mit Ladeziel, Zeitlimit und Sicherungen) und gilt zusätzlich zu dieser Datei.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
