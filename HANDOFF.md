@@ -173,6 +173,15 @@ Bleibt als Schalter erhalten, aber **an** startet jetzt eine Sitzung mit den Sta
 9. **Vor dem Start den Ist-Zustand lesen**; läuft bereits Force-Laden, nichts senden.
 10. Alle Schaltbefehle mit `await` und sauberer Fehlerbehandlung — kein Fire-and-forget.
 
+### Vom Nutzer festgelegt (15.11.2026)
+
+| Situation | Verhalten |
+|---|---|
+| Neuer Start, während die eigene Ladung läuft | Neue Werte übernehmen: neues Ziel, Frist neu ab jetzt, weiterhin höchstens 180 min. Kein zweiter Startbefehl an den Speicher. |
+| Ladestand liegt schon auf oder über dem Ziel | Nicht starten, nichts senden. Rückmeldung `ziel_bereits_erreicht`. |
+| Freigabe (Flow oder Schalter aus), während der Speicher **selbst** lädt | **Nie anfassen**, auch nicht auf ausdrücklichen Wunsch. Rückmeldung `fremde_ladung`. Die App beendet ausschließlich Ladungen, die sie selbst gestartet hat. |
+| Startbefehl schlägt fehl (unklar, ob angekommen) | Sicherheitshalber sofort freigeben, Fehler an den Flow, `force_charge_ended` mit `fehler`. Kein automatischer neuer Versuch. |
+
 ### Vorschlag für die Struktur
 
 - `lib/LalaClient.js` — Transport: HTTPS zuerst, HTTP als Rückfall, eigener Agent mit abgeschalteter Zertifikatsprüfung, Header wie oben, Requests serialisiert, Timeout 10 s, Kodierung und Dekodierung

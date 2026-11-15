@@ -448,24 +448,25 @@ describe('Manuelle Freigabe', () => {
   test('eigene Sitzung -> manuell', async () => {
     const { session, client, ended } = setup();
     await session.start({ targetSoc: 90 });
-    await session.release();
+    assert.deepEqual(await session.release(), { released: true });
     assert.equal(client.running, false);
     assert.equal(ended[0].reason, REASONS.MANUAL);
   });
 
   test('nichts aktiv -> nichts senden', async () => {
     const { session, client } = setup();
-    await session.release();
+    assert.deepEqual(await session.release(), { released: false, reason: 'keine_eigene_sitzung' });
     assert.equal(client.count('release'), 0);
   });
 
-  test('fremdes Force-Laden auf ausdruecklichen Wunsch freigeben', async () => {
+  test('vom Speicher gestartete Ladung wird auch auf Wunsch nicht beendet', async () => {
     const client = fakeClient({ running: true });
     const { session, ended } = setup({ client });
     await session.init(await client.readStatus());
-    await session.release();
-    assert.equal(client.running, false);
-    assert.equal(ended.length, 0, 'keine eigene Sitzung -> kein Ende-Ereignis');
+    assert.deepEqual(await session.release(), { released: false, reason: 'fremde_ladung' });
+    assert.equal(client.count('release'), 0);
+    assert.equal(client.running, true);
+    assert.equal(ended.length, 0);
   });
 
   test('Freigabe kurz nach Start wird immer gesendet, auch wenn der Speicher noch nicht aktiv meldet', async () => {
