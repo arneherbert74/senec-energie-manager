@@ -1,6 +1,7 @@
 {
   "name": {
-    "en": "Senec battery"
+    "en": "Senec battery",
+    "de": "Senec-Batterie"
   },
   "class": "battery",
   "capabilities": [
@@ -10,17 +11,27 @@
     "measure_power",
     "measure_voltage",
     "meter_power.charged",
-    "meter_power.discharged"
+    "meter_power.discharged",
+    "force_charge_status"
   ],
   "capabilitiesOptions": {
     "onoff": {
       "title": {
-        "en": "On/Off"
-      },
-      "type": "boolean",
-      "getable": true,
-      "setable": true,
-      "uiComponent": "toggle"
+        "en": "Grid charging",
+        "de": "Netzladung"
+      }
+    },
+    "measure_voltage": {
+      "title": {
+        "en": "Battery Voltage",
+        "de": "Batteriespannung"
+      }
+    },
+    "measure_current": {
+      "title": {
+        "en": "Battery Current",
+        "de": "Batteriestrom"
+      }
     },
     "meter_power.charged": {
       "title": {
@@ -54,13 +65,106 @@
     "lan"
   ],
   "images": {
-    "small": "{{driverAssetsPath}}/images/small.png",
-    "large": "{{driverAssetsPath}}/images/large.png",
-    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+    "small": "{{driverAssetsPath}}/images/small-battery-ai.png",
+    "large": "{{driverAssetsPath}}/images/large-battery-ai.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge-battery-ai.png"
   },
+  "settings": [
+    {
+      "id": "ipAddress",
+      "type": "text",
+      "label": {
+        "en": "IP Address",
+        "de": "IP-Adresse"
+      },
+      "placeholder": {
+        "en": "Enter the IP address of your Senec Battery",
+        "de": "Geben Sie die IP-Adresse Ihrer Senec-Batterie ein"
+      },
+      "required": true,
+      "validator": "regex",
+      "regex": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    },
+    {
+      "type": "group",
+      "label": {
+        "en": "Grid charging via switch",
+        "de": "Netzladung per Schalter"
+      },
+      "children": [
+        {
+          "id": "default_target",
+          "type": "number",
+          "label": {
+            "en": "Target charge",
+            "de": "Ladeziel"
+          },
+          "hint": {
+            "en": "Used when you switch grid charging on in Homey. Flows pass their own values.",
+            "de": "Gilt, wenn du die Netzladung in Homey einschaltest. Flows geben eigene Werte mit."
+          },
+          "value": 80,
+          "min": 50,
+          "max": 100,
+          "step": 1,
+          "units": {
+            "en": "%",
+            "de": "%"
+          }
+        },
+        {
+          "id": "default_minutes",
+          "type": "number",
+          "label": {
+            "en": "Maximum duration",
+            "de": "Höchstdauer"
+          },
+          "hint": {
+            "en": "Never more than 180 minutes.",
+            "de": "Nie mehr als 180 Minuten."
+          },
+          "value": 120,
+          "min": 1,
+          "max": 180,
+          "step": 1,
+          "units": {
+            "en": "min",
+            "de": "min"
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "label": {
+        "en": "Notifications",
+        "de": "Benachrichtigungen"
+      },
+      "children": [
+        {
+          "id": "notify_start",
+          "type": "checkbox",
+          "label": {
+            "en": "Grid charging started",
+            "de": "Netzladung gestartet"
+          },
+          "value": true
+        },
+        {
+          "id": "notify_end",
+          "type": "checkbox",
+          "label": {
+            "en": "Grid charging ended",
+            "de": "Netzladung beendet"
+          },
+          "value": true
+        }
+      ]
+    }
+  ],
   "pair": [
     {
-      "id": "ip"
+      "id": "set_ip_view"
     }
   ]
 }

@@ -1,0 +1,23 @@
+{
+  "name": {
+    "en": "SENEC grid charging",
+    "de": "SENEC Netzladung"
+  },
+  "height": 300,
+  "transparent": false,
+  "settings": [],
+  "api": {
+    "getState": {
+      "method": "GET",
+      "path": "/"
+    },
+    "start": {
+      "method": "POST",
+      "path": "/start"
+    },
+    "release": {
+      "method": "POST",
+      "path": "/release"
+    }
+  }
+}

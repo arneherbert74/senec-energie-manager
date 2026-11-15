@@ -2,5 +2,9 @@
   "1.0.0": {
     "en": "Initial release with battery, solar, grid, and consumption monitoring.",
     "de": "Erstveröffentlichung mit Batterie-, Solar-, Netz- und Verbrauchsüberwachung."
+  },
+  "1.1.0": {
+    "en": "Safe grid charging with target and time limit, flow cards, notifications, dashboard widgets for energy flow and grid charging, wallbox readings.",
+    "de": "Sichere Netzladung mit Ziel und Zeitlimit, Flow-Karten, Benachrichtigungen, Dashboard-Widgets für Energiefluss und Netzladung, Wallbox-Werte."
   }
 }

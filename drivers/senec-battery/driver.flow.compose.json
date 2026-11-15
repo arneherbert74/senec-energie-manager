@@ -1,0 +1,129 @@
+{
+  "triggers": [
+    {
+      "id": "force_charge_ended",
+      "title": {
+        "en": "Grid charging ended",
+        "de": "Netzladung beendet"
+      },
+      "hint": {
+        "en": "Fires when a grid charge started by this app ends. Reasons: ziel_erreicht, zeit_abgelaufen, manuell, vom_speicher_beendet, app_neustart, fehler.",
+        "de": "Wird ausgelöst, wenn eine von dieser App gestartete Netzladung endet. Gründe: ziel_erreicht, zeit_abgelaufen, manuell, vom_speicher_beendet, app_neustart, fehler."
+      },
+      "tokens": [
+        {
+          "name": "reason",
+          "type": "string",
+          "title": {
+            "en": "Reason (code)",
+            "de": "Grund (Code)"
+          },
+          "example": "ziel_erreicht"
+        },
+        {
+          "name": "reason_text",
+          "type": "string",
+          "title": {
+            "en": "Reason",
+            "de": "Grund"
+          },
+          "example": {
+            "en": "Target reached",
+            "de": "Ziel erreicht"
+          }
+        },
+        {
+          "name": "soc",
+          "type": "number",
+          "title": {
+            "en": "Charge level",
+            "de": "Ladestand"
+          },
+          "example": 80
+        },
+        {
+          "name": "duration_min",
+          "type": "number",
+          "title": {
+            "en": "Duration (min)",
+            "de": "Dauer (min)"
+          },
+          "example": 96
+        }
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "id": "force_charge_active",
+      "title": {
+        "en": "Grid charging !{{is|is not}} active",
+        "de": "Netzladung !{{ist|ist nicht}} aktiv"
+      },
+      "hint": {
+        "en": "Only counts charges started by this app.",
+        "de": "Zählt nur Ladungen, die diese App gestartet hat."
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "force_charge_start",
+      "title": {
+        "en": "Charge from grid",
+        "de": "Aus dem Netz laden"
+      },
+      "titleFormatted": {
+        "en": "Charge from grid to [[target_soc]] %, at most [[max_minutes]] min",
+        "de": "Aus dem Netz laden bis [[target_soc]] %, höchstens [[max_minutes]] min"
+      },
+      "hint": {
+        "en": "Stops automatically at the target or the time limit (max. 180 min). Fails if already charging, the target is reached or the battery is charging on its own.",
+        "de": "Stoppt automatisch bei Ziel oder Zeitlimit (höchstens 180 min). Schlägt fehl, wenn schon geladen wird, das Ziel erreicht ist oder der Speicher selbst lädt."
+      },
+      "args": [
+        {
+          "name": "target_soc",
+          "type": "number",
+          "min": 50,
+          "max": 100,
+          "step": 1,
+          "placeholder": {
+            "en": "80",
+            "de": "80"
+          },
+          "title": {
+            "en": "Target %",
+            "de": "Ziel %"
+          }
+        },
+        {
+          "name": "max_minutes",
+          "type": "number",
+          "min": 1,
+          "max": 180,
+          "step": 1,
+          "placeholder": {
+            "en": "120",
+            "de": "120"
+          },
+          "title": {
+            "en": "Minutes",
+            "de": "Minuten"
+          }
+        }
+      ]
+    },
+    {
+      "id": "force_charge_release",
+      "title": {
+        "en": "Release battery",
+        "de": "Speicher freigeben"
+      },
+      "hint": {
+        "en": "Ends grid charging started by this app. A charge started by the battery itself is never touched.",
+        "de": "Beendet die von dieser App gestartete Netzladung. Eine Ladung, die der Speicher selbst gestartet hat, bleibt unberührt."
+      }
+    }
+  ]
+}

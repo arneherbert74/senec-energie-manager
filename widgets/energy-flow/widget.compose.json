@@ -1,0 +1,15 @@
+{
+  "name": {
+    "en": "SENEC energy flow",
+    "de": "SENEC Energiefluss"
+  },
+  "height": "112%",
+  "transparent": false,
+  "settings": [],
+  "api": {
+    "getState": {
+      "method": "GET",
+      "path": "/"
+    }
+  }
+}

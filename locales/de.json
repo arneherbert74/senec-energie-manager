@@ -48,5 +48,68 @@
     "invalid_ip": "Bitte geben Sie eine gültige IP-Adresse ein",
     "checking": "Verbindung wird überprüft...",
     "success": "Erfolgreich mit Senec-Batterie verbunden"
+  },
+  "status": {
+    "idle": "Bereit",
+    "starting": "Startet …",
+    "active": "Lädt bis __target__ % · noch __minutes__ min",
+    "releasing": "Wird freigegeben",
+    "releasing_retry": "Freigabe läuft, neuer Versuch",
+    "foreign": "SENEC lädt selbst"
+  },
+  "reasons": {
+    "ziel_erreicht": "Ziel erreicht",
+    "zeit_abgelaufen": "Zeit abgelaufen",
+    "manuell": "Von Hand beendet",
+    "vom_speicher_beendet": "Vom Speicher beendet",
+    "app_neustart": "Nach Neustart der App beendet",
+    "fehler": "Fehler beim Start"
+  },
+  "errors": {
+    "bereits_aktiv": "Der Speicher lädt bereits. Es wurde nichts gesendet.",
+    "ziel_bereits_erreicht": "Der Ladestand liegt schon auf oder über dem Ziel.",
+    "wird_freigegeben": "Die letzte Ladung wird noch freigegeben. Bitte kurz warten.",
+    "fremde_ladung": "Der SENEC lädt gerade selbst (z. B. Sicherheitsladung). Die App greift nicht ein.",
+    "unreachable": "SENEC nicht erreichbar",
+    "no_device": "Kein SENEC-Speicher eingerichtet."
+  },
+  "notify": {
+    "started": "Netzladung gestartet (__source__): bis __target__ %, höchstens __minutes__ min. Ladestand __soc__ %.",
+    "ended": "Netzladung beendet: __reason__. Ladestand __soc__ % nach __minutes__ min.",
+    "release_failed": "Achtung: Freigabe der Netzladung fehlgeschlagen. Die App versucht es weiter."
+  },
+  "source": {
+    "switch": "Schalter",
+    "flow": "Flow",
+    "widget": "Dashboard"
+  },
+  "warning": {
+    "release_failed": "Freigabe fehlgeschlagen (__count__×), neuer Versuch läuft"
+  },
+  "widget": {
+    "pv": "PV",
+    "battery": "Speicher",
+    "grid": "Netz",
+    "house": "Haus",
+    "wallbox": "Wallbox",
+    "charging": "lädt",
+    "discharging": "entlädt",
+    "import": "Bezug",
+    "export": "Einspeisung",
+    "ev_connected": "Auto da",
+    "ev_free": "frei",
+    "age": "Stand vor __seconds__ s",
+    "error": "Keine Verbindung zur App",
+    "no_device": "Kein SENEC-Speicher eingerichtet",
+    "no_data": "Noch keine Messwerte",
+    "unreachable": "SENEC nicht erreichbar",
+    "target": "Ziel __target__ %",
+    "max_duration": "Höchstdauer / Rest",
+    "started_by": "Gestartet von",
+    "last_charge": "Letzte Ladung",
+    "duration": "Dauer",
+    "start": "Jetzt laden · __target__ %, __minutes__ min",
+    "confirm": "Nochmal tippen zum Starten",
+    "release": "Freigeben"
   }
 }

@@ -1,7 +1,8 @@
 {
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.github.dbone29.senec-connector",
-  "version": "1.0.0",
-  "compatibility": ">=12.0.0",
+  "version": "1.1.0",
+  "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": [
     "local"
@@ -28,9 +29,163 @@
     "name": "Daniel Busenius",
     "email": "info@daniel-b.de"
   },
+  "flow": {
+    "triggers": [
+      {
+        "id": "force_charge_ended",
+        "title": {
+          "en": "Grid charging ended",
+          "de": "Netzladung beendet"
+        },
+        "hint": {
+          "en": "Fires when a grid charge started by this app ends. Reasons: ziel_erreicht, zeit_abgelaufen, manuell, vom_speicher_beendet, app_neustart, fehler.",
+          "de": "Wird ausgelöst, wenn eine von dieser App gestartete Netzladung endet. Gründe: ziel_erreicht, zeit_abgelaufen, manuell, vom_speicher_beendet, app_neustart, fehler."
+        },
+        "tokens": [
+          {
+            "name": "reason",
+            "type": "string",
+            "title": {
+              "en": "Reason (code)",
+              "de": "Grund (Code)"
+            },
+            "example": "ziel_erreicht"
+          },
+          {
+            "name": "reason_text",
+            "type": "string",
+            "title": {
+              "en": "Reason",
+              "de": "Grund"
+            },
+            "example": {
+              "en": "Target reached",
+              "de": "Ziel erreicht"
+            }
+          },
+          {
+            "name": "soc",
+            "type": "number",
+            "title": {
+              "en": "Charge level",
+              "de": "Ladestand"
+            },
+            "example": 80
+          },
+          {
+            "name": "duration_min",
+            "type": "number",
+            "title": {
+              "en": "Duration (min)",
+              "de": "Dauer (min)"
+            },
+            "example": 96
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=senec-battery"
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "force_charge_active",
+        "title": {
+          "en": "Grid charging !{{is|is not}} active",
+          "de": "Netzladung !{{ist|ist nicht}} aktiv"
+        },
+        "hint": {
+          "en": "Only counts charges started by this app.",
+          "de": "Zählt nur Ladungen, die diese App gestartet hat."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=senec-battery"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "force_charge_start",
+        "title": {
+          "en": "Charge from grid",
+          "de": "Aus dem Netz laden"
+        },
+        "titleFormatted": {
+          "en": "Charge from grid to [[target_soc]] %, at most [[max_minutes]] min",
+          "de": "Aus dem Netz laden bis [[target_soc]] %, höchstens [[max_minutes]] min"
+        },
+        "hint": {
+          "en": "Stops automatically at the target or the time limit (max. 180 min). Fails if already charging, the target is reached or the battery is charging on its own.",
+          "de": "Stoppt automatisch bei Ziel oder Zeitlimit (höchstens 180 min). Schlägt fehl, wenn schon geladen wird, das Ziel erreicht ist oder der Speicher selbst lädt."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=senec-battery"
+          },
+          {
+            "name": "target_soc",
+            "type": "number",
+            "min": 50,
+            "max": 100,
+            "step": 1,
+            "placeholder": {
+              "en": "80",
+              "de": "80"
+            },
+            "title": {
+              "en": "Target %",
+              "de": "Ziel %"
+            }
+          },
+          {
+            "name": "max_minutes",
+            "type": "number",
+            "min": 1,
+            "max": 180,
+            "step": 1,
+            "placeholder": {
+              "en": "120",
+              "de": "120"
+            },
+            "title": {
+              "en": "Minutes",
+              "de": "Minuten"
+            }
+          }
+        ]
+      },
+      {
+        "id": "force_charge_release",
+        "title": {
+          "en": "Release battery",
+          "de": "Speicher freigeben"
+        },
+        "hint": {
+          "en": "Ends grid charging started by this app. A charge started by the battery itself is never touched.",
+          "de": "Beendet die von dieser App gestartete Netzladung. Eine Ladung, die der Speicher selbst gestartet hat, bleibt unberührt."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=senec-battery"
+          }
+        ]
+      }
+    ]
+  },
   "drivers": [
     {
-      "id": "senec-battery",
       "name": {
         "en": "Senec battery",
         "de": "Senec-Batterie"
@@ -43,13 +198,14 @@
         "measure_power",
         "measure_voltage",
         "meter_power.charged",
-        "meter_power.discharged"
+        "meter_power.discharged",
+        "force_charge_status"
       ],
       "capabilitiesOptions": {
         "onoff": {
           "title": {
-            "en": "Force Charging",
-            "de": "Zwangsladen"
+            "en": "Grid charging",
+            "de": "Netzladung"
           }
         },
         "measure_voltage": {
@@ -115,69 +271,92 @@
           "required": true,
           "validator": "regex",
           "regex": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Grid charging via switch",
+            "de": "Netzladung per Schalter"
+          },
+          "children": [
+            {
+              "id": "default_target",
+              "type": "number",
+              "label": {
+                "en": "Target charge",
+                "de": "Ladeziel"
+              },
+              "hint": {
+                "en": "Used when you switch grid charging on in Homey. Flows pass their own values.",
+                "de": "Gilt, wenn du die Netzladung in Homey einschaltest. Flows geben eigene Werte mit."
+              },
+              "value": 80,
+              "min": 50,
+              "max": 100,
+              "step": 1,
+              "units": {
+                "en": "%",
+                "de": "%"
+              }
+            },
+            {
+              "id": "default_minutes",
+              "type": "number",
+              "label": {
+                "en": "Maximum duration",
+                "de": "Höchstdauer"
+              },
+              "hint": {
+                "en": "Never more than 180 minutes.",
+                "de": "Nie mehr als 180 Minuten."
+              },
+              "value": 120,
+              "min": 1,
+              "max": 180,
+              "step": 1,
+              "units": {
+                "en": "min",
+                "de": "min"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Notifications",
+            "de": "Benachrichtigungen"
+          },
+          "children": [
+            {
+              "id": "notify_start",
+              "type": "checkbox",
+              "label": {
+                "en": "Grid charging started",
+                "de": "Netzladung gestartet"
+              },
+              "value": true
+            },
+            {
+              "id": "notify_end",
+              "type": "checkbox",
+              "label": {
+                "en": "Grid charging ended",
+                "de": "Netzladung beendet"
+              },
+              "value": true
+            }
+          ]
         }
       ],
       "pair": [
         {
           "id": "set_ip_view"
         }
-      ]
+      ],
+      "id": "senec-battery"
     },
     {
-      "id": "senec-solar",
-      "name": {
-        "en": "Senec Solar/Inverter",
-        "de": "Senec Solar/Wechselrichter"
-      },
-      "class": "solarpanel",
-      "capabilities": [
-        "measure_power",
-        "meter_power"
-      ],
-      "capabilitiesOptions": {
-        "measure_power": {
-          "title": {
-            "en": "Solar Power",
-            "de": "Solarleistung"
-          }
-        },
-        "meter_power": {
-          "title": {
-            "en": "Solar Energy Generated",
-            "de": "Erzeugte Solarenergie"
-          }
-        }
-      },
-      "energy": {
-        "meterPowerExportedCapability": "meter_power"
-      },
-      "platforms": [
-        "local"
-      ],
-      "connectivity": [
-        "lan"
-      ],
-      "images": {
-        "small": "/drivers/senec-solar/assets/images/small.png",
-        "large": "/drivers/senec-solar/assets/images/large.png",
-        "xlarge": "/drivers/senec-solar/assets/images/xlarge.png"
-      },
-      "pair": [
-        {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "add_devices"
-          }
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
-        }
-      ]
-    },
-    {
-      "id": "senec-consumption",
       "name": {
         "en": "Senec Home Consumption",
         "de": "Senec Hausverbrauch"
@@ -227,10 +406,10 @@
           "id": "add_devices",
           "template": "add_devices"
         }
-      ]
+      ],
+      "id": "senec-consumption"
     },
     {
-      "id": "senec-grid",
       "name": {
         "en": "Senec Grid Connection",
         "de": "Senec Netzanschluss"
@@ -289,7 +468,116 @@
           "id": "add_devices",
           "template": "add_devices"
         }
-      ]
+      ],
+      "id": "senec-grid"
+    },
+    {
+      "name": {
+        "en": "Senec Solar/Inverter",
+        "de": "Senec Solar/Wechselrichter"
+      },
+      "class": "solarpanel",
+      "capabilities": [
+        "measure_power",
+        "meter_power"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Solar Power",
+            "de": "Solarleistung"
+          }
+        },
+        "meter_power": {
+          "title": {
+            "en": "Solar Energy Generated",
+            "de": "Erzeugte Solarenergie"
+          }
+        }
+      },
+      "energy": {
+        "meterPowerExportedCapability": "meter_power"
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/senec-solar/assets/images/small.png",
+        "large": "/drivers/senec-solar/assets/images/large.png",
+        "xlarge": "/drivers/senec-solar/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "senec-solar"
     }
-  ]
+  ],
+  "widgets": {
+    "energy-flow": {
+      "name": {
+        "en": "SENEC energy flow",
+        "de": "SENEC Energiefluss"
+      },
+      "height": "112%",
+      "transparent": false,
+      "settings": [],
+      "api": {
+        "getState": {
+          "method": "GET",
+          "path": "/"
+        }
+      },
+      "id": "energy-flow"
+    },
+    "grid-charge": {
+      "name": {
+        "en": "SENEC grid charging",
+        "de": "SENEC Netzladung"
+      },
+      "height": 300,
+      "transparent": false,
+      "settings": [],
+      "api": {
+        "getState": {
+          "method": "GET",
+          "path": "/"
+        },
+        "start": {
+          "method": "POST",
+          "path": "/start"
+        },
+        "release": {
+          "method": "POST",
+          "path": "/release"
+        }
+      },
+      "id": "grid-charge"
+    }
+  },
+  "capabilities": {
+    "force_charge_status": {
+      "type": "string",
+      "title": {
+        "en": "Grid charging status",
+        "de": "Status Netzladung"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/icon.svg"
+    }
+  }
 }

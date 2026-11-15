@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { margin: 0; }
+    .wrap { display: flex; flex-direction: column; gap: 12px; }
+    .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .soc { font-size: 36px; font-weight: 700; color: var(--homey-text-color, #222); }
+    .of { font-size: var(--homey-font-size-small, 13px); color: var(--homey-text-color-light, #777); }
+    .pill { font-size: var(--homey-font-size-small, 13px); font-weight: 600; border-radius: 999px; padding: 3px 10px;
+            border: 1px solid var(--homey-line-color, #ccc); color: var(--homey-text-color, #222); white-space: nowrap; }
+    .pill.on { background: #5B67E8; border-color: #5B67E8; color: #fff; }
+    .pill.warn { background: #F08A3C; border-color: #F08A3C; color: #1E0E00; }
+    .bar { position: relative; height: 10px; border-radius: 5px; background: var(--homey-line-color, #ddd); overflow: hidden; }
+    .fill { position: absolute; left: 0; top: 0; bottom: 0; background: #7C88FF; border-radius: 5px; width: 0; }
+    .target { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--homey-text-color, #222); }
+    dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+    dt { font-size: 12px; color: var(--homey-text-color-light, #777); }
+    dd { margin: 2px 0 0; font-size: var(--homey-font-size-small, 14px); font-weight: 600; color: var(--homey-text-color, #222); }
+    .buttons { display: flex; gap: 8px; }
+    button { flex: 1 1 0; min-height: 44px; border-radius: 10px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+    #start { background: #5B67E8; color: #fff; border: 0; }
+    #release { background: transparent; color: var(--homey-text-color, #222); border: 1px solid var(--homey-line-color, #ccc); }
+    button:disabled { opacity: 0.4; cursor: default; }
+    .note { font-size: 12.5px; line-height: 1.4; color: var(--homey-text-color-light, #777); min-height: 1em; }
+    .note.err { color: var(--homey-text-color-danger, #c0392b); }
+  </style>
+</head>
+<body class="homey-widget">
+  <div class="wrap">
+    <div class="top">
+      <div><span id="soc" class="soc">–</span> <span id="of" class="of"></span></div>
+      <span id="status" class="pill">–</span>
+    </div>
+    <div class="bar" aria-hidden="true"><div id="fill" class="fill"></div><div id="target" class="target"></div></div>
+    <dl>
+      <div><dt data-t="widget.max_duration">Höchstdauer</dt><dd id="dur">–</dd></div>
+      <div><dt data-t="widget.started_by">Gestartet von</dt><dd id="src">–</dd></div>
+      <div><dt data-t="widget.last_charge">Letzte Ladung</dt><dd id="last">–</dd></div>
+      <div><dt data-t="widget.duration">Dauer</dt><dd id="lastdur">–</dd></div>
+    </dl>
+    <div class="buttons">
+      <button id="start" type="button">–</button>
+      <button id="release" type="button" data-t="widget.release">Freigeben</button>
+    </div>
+    <div id="note" class="note" role="status"></div>
+  </div>
+
+  <script>
+    function onHomeyReady(Homey) {
+      const t = (key, fallback, tokens) => {
+        try {
+          const s = Homey.__(key, tokens);
+          return s && s !== key ? s : fallback;
+        } catch (e) { return fallback; }
+      };
+      document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t, el.textContent); });
+      const $ = (id) => document.getElementById(id);
+      const lang = (navigator.language || 'de').slice(0, 2);
+      let state = null;
+      let armed = false;
+      let armTimer = null;
+
+      const note = (text, isErr) => { $('note').textContent = text || ''; $('note').className = isErr ? 'note err' : 'note'; };
+      const day = (ts) => new Date(ts).toLocaleString(lang, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+      function render() {
+        if (!state || !state.configured) { note(t('widget.no_device', 'Kein SENEC-Speicher eingerichtet'), true); return; }
+        const c = state.charge;
+        const s = state.live;
+        const soc = s ? Math.round(s.soc) : null;
+        const target = c.active ? c.target : c.defaultTarget;
+        $('soc').textContent = soc === null ? '–' : `${soc} %`;
+        $('of').textContent = t('widget.target', `Ziel ${target} %`, { target });
+        $('fill').style.width = `${soc || 0}%`;
+        $('target').style.left = `calc(${target}% - 1px)`;
+        $('status').textContent = c.statusText || '–';
+        $('status').className = c.state === 'RELEASING' ? 'pill warn' : (c.active || c.foreignActive) ? 'pill on' : 'pill';
+        $('dur').textContent = `${c.active ? Math.ceil((c.remainingMs || 0) / 60000) : c.defaultMinutes} min`;
+        $('src').textContent = c.active && c.lastStart ? t(`source.${c.lastStart.source}`, c.lastStart.source) : '–';
+        $('last').textContent = c.lastEnded ? `${day(c.lastEnded.at)} · ${t(`reasons.${c.lastEnded.reason}`, c.lastEnded.reason)}` : '–';
+        $('lastdur').textContent = c.lastEnded ? `${c.lastEnded.durationMin} min` : '–';
+
+        const busy = c.state !== 'IDLE';
+        $('start').disabled = busy || c.foreignActive || !state.available;
+        $('release').disabled = !busy || c.state === 'RELEASING';
+        $('start').textContent = armed
+          ? t('widget.confirm', 'Nochmal tippen zum Starten')
+          : t('widget.start', `Jetzt laden · ${c.defaultTarget} %, ${c.defaultMinutes} min`, { target: c.defaultTarget, minutes: c.defaultMinutes });
+        if (!$('note').classList.contains('err') && !armed) {
+          note(c.foreignActive ? t('errors.fremde_ladung', 'Der SENEC lädt selbst.') : (c.warning || ''), !!c.warning);
+        }
+      }
+
+      async function refresh() {
+        try {
+          state = await Homey.api('GET', '/');
+        } catch (e) {
+          note(t('widget.error', 'Keine Verbindung zur App'), true);
+          return;
+        }
+        render();
+      }
+
+      $('start').addEventListener('click', async () => {
+        if (!armed) {
+          armed = true;
+          render();
+          clearTimeout(armTimer);
+          armTimer = setTimeout(() => { armed = false; render(); }, 5000);
+          return;
+        }
+        armed = false;
+        clearTimeout(armTimer);
+        $('start').disabled = true;
+        note('');
+        try {
+          await Homey.api('POST', '/start', {});
+          if (Homey.hapticFeedback) Homey.hapticFeedback();
+        } catch (e) {
+          note(e && e.message ? e.message : String(e), true);
+        }
+        await refresh();
+      });
+
+      $('release').addEventListener('click', async () => {
+        $('release').disabled = true;
+        note('');
+        try {
+          await Homey.api('POST', '/release', {});
+        } catch (e) {
+          note(e && e.message ? e.message : String(e), true);
+        }
+        await refresh();
+      });
+
+      refresh().finally(() => Homey.ready());
+      setInterval(refresh, 5000);
+    }
+  </script>
+</body>
+</html>

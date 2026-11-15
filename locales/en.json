@@ -48,5 +48,68 @@
     "invalid_ip": "Please enter a valid IP address",
     "checking": "Checking connection...",
     "success": "Successfully connected to Senec battery"
+  },
+  "status": {
+    "idle": "Ready",
+    "starting": "Starting …",
+    "active": "Charging to __target__ % · __minutes__ min left",
+    "releasing": "Releasing",
+    "releasing_retry": "Releasing, retrying",
+    "foreign": "SENEC is charging on its own"
+  },
+  "reasons": {
+    "ziel_erreicht": "Target reached",
+    "zeit_abgelaufen": "Time limit reached",
+    "manuell": "Stopped manually",
+    "vom_speicher_beendet": "Stopped by the battery",
+    "app_neustart": "Ended after app restart",
+    "fehler": "Start failed"
+  },
+  "errors": {
+    "bereits_aktiv": "The battery is already charging. Nothing was sent.",
+    "ziel_bereits_erreicht": "The charge level is already at or above the target.",
+    "wird_freigegeben": "The previous charge is still being released. Please wait.",
+    "fremde_ladung": "The SENEC is charging on its own (e.g. safety charge). The app does not interfere.",
+    "unreachable": "SENEC not reachable",
+    "no_device": "No SENEC battery set up."
+  },
+  "notify": {
+    "started": "Grid charging started (__source__): to __target__ %, at most __minutes__ min. Charge level __soc__ %.",
+    "ended": "Grid charging ended: __reason__. Charge level __soc__ % after __minutes__ min.",
+    "release_failed": "Warning: releasing grid charging failed. The app keeps retrying."
+  },
+  "source": {
+    "switch": "switch",
+    "flow": "flow",
+    "widget": "dashboard"
+  },
+  "warning": {
+    "release_failed": "Release failed (__count__×), retrying"
+  },
+  "widget": {
+    "pv": "PV",
+    "battery": "Battery",
+    "grid": "Grid",
+    "house": "House",
+    "wallbox": "Wallbox",
+    "charging": "charging",
+    "discharging": "discharging",
+    "import": "import",
+    "export": "export",
+    "ev_connected": "car plugged in",
+    "ev_free": "free",
+    "age": "__seconds__ s ago",
+    "error": "No connection to the app",
+    "no_device": "No SENEC battery set up",
+    "no_data": "No readings yet",
+    "unreachable": "SENEC not reachable",
+    "target": "target __target__ %",
+    "max_duration": "Max. duration / left",
+    "started_by": "Started by",
+    "last_charge": "Last charge",
+    "duration": "Duration",
+    "start": "Charge now · __target__ %, __minutes__ min",
+    "confirm": "Tap again to start",
+    "release": "Release"
   }
 }

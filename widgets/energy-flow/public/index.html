@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --pv: #F2C230; --bat: #5B67E8; --grid: #6B7385; --house: #F08A3C; --wb: #2FB8A6;
+    }
+    body { margin: 0; }
+    .wrap { display: flex; flex-direction: column; gap: var(--homey-su-2, 8px); }
+    svg { width: 100%; height: auto; display: block; }
+    .val { font-weight: 700; font-size: 25px; }
+    .lbl { font-size: 12px; font-weight: 500; }
+    .sub { font-size: 11.5px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    .chip { font-size: var(--homey-font-size-small, 13px); color: var(--homey-text-color-light, #888);
+            border: 1px solid var(--homey-line-color, #ccc); border-radius: 999px; padding: 2px 10px; }
+    .msg { text-align: center; color: var(--homey-text-color-light, #888); padding: 24px 0; }
+    .ring { fill: none; stroke: var(--homey-line-color, #999); stroke-width: 2; }
+    .wbtext { fill: var(--homey-text-color, #222); }
+  </style>
+</head>
+<body class="homey-widget">
+  <div class="wrap">
+    <div id="msg" class="msg" hidden></div>
+    <svg id="flow" viewBox="0 0 340 340" role="img" aria-label="Energiefluss">
+      <g stroke-linecap="round">
+        <line id="l-pv" x1="170" y1="170" x2="170" y2="62" stroke="var(--pv)"></line>
+        <line id="l-bat" x1="170" y1="170" x2="282" y2="140" stroke="var(--bat)"></line>
+        <line id="l-grid" x1="170" y1="170" x2="58" y2="140" stroke="var(--grid)"></line>
+        <line id="l-house" x1="170" y1="170" x2="242" y2="276" stroke="var(--house)"></line>
+        <line id="l-wb" x1="170" y1="170" x2="98" y2="276" stroke="var(--wb)"></line>
+      </g>
+      <circle cx="170" cy="170" r="12" fill="var(--grid)" opacity="0.5"></circle>
+
+      <circle cx="170" cy="58" r="50" fill="var(--pv)"></circle>
+      <text x="170" y="40" text-anchor="middle" class="lbl" fill="#1A1500" data-t="widget.pv">PV</text>
+      <text id="v-pv" x="170" y="68" text-anchor="middle" class="val" fill="#1A1500">–</text>
+      <text x="170" y="86" text-anchor="middle" class="sub" fill="#1A1500">kW</text>
+
+      <circle cx="282" cy="140" r="50" fill="var(--bat)"></circle>
+      <text x="282" y="122" text-anchor="middle" class="lbl" fill="#FFFFFF" data-t="widget.battery">Speicher</text>
+      <text id="v-bat" x="282" y="150" text-anchor="middle" class="val" fill="#FFFFFF">–</text>
+      <text id="s-bat" x="282" y="168" text-anchor="middle" class="sub" fill="#FFFFFF">kW</text>
+
+      <circle cx="58" cy="140" r="50" fill="var(--grid)"></circle>
+      <text x="58" y="122" text-anchor="middle" class="lbl" fill="#FFFFFF" data-t="widget.grid">Netz</text>
+      <text id="v-grid" x="58" y="150" text-anchor="middle" class="val" fill="#FFFFFF">–</text>
+      <text id="s-grid" x="58" y="168" text-anchor="middle" class="sub" fill="#FFFFFF">kW</text>
+
+      <circle cx="242" cy="276" r="50" fill="var(--house)"></circle>
+      <text x="242" y="258" text-anchor="middle" class="lbl" fill="#1E0E00" data-t="widget.house">Haus</text>
+      <text id="v-house" x="242" y="286" text-anchor="middle" class="val" fill="#1E0E00">–</text>
+      <text x="242" y="304" text-anchor="middle" class="sub" fill="#1E0E00">kW</text>
+
+      <g id="wb">
+        <circle cx="98" cy="276" r="49" class="ring" stroke="var(--wb)"></circle>
+        <text x="98" y="258" text-anchor="middle" class="lbl wbtext" data-t="widget.wallbox">Wallbox</text>
+        <text id="v-wb" x="98" y="286" text-anchor="middle" class="val wbtext">–</text>
+        <text id="s-wb" x="98" y="304" text-anchor="middle" class="sub wbtext">kW</text>
+      </g>
+    </svg>
+    <div class="chips">
+      <span id="c-state" class="chip">–</span>
+      <span id="c-age" class="chip" hidden></span>
+    </div>
+  </div>
+
+  <script>
+    function onHomeyReady(Homey) {
+      const t = (key, fallback, tokens) => {
+        try {
+          const s = Homey.__(key, tokens);
+          return s && s !== key ? s : fallback;
+        } catch (e) { return fallback; }
+      };
+      document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t, el.textContent); });
+
+      const lang = (navigator.language || 'de').slice(0, 2);
+      const kw = (w) => (w === null || w === undefined ? '–'
+        : (Math.abs(w) / 1000).toLocaleString(lang, { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+      const width = (w) => {
+        if (w === null || w === undefined || Math.abs(w) < 50) return 1.5;
+        return Math.min(8, 2 + Math.abs(w) / 600);
+      };
+      const set = (id, text) => { document.getElementById(id).textContent = text; };
+      const line = (id, w) => {
+        const el = document.getElementById(id);
+        el.setAttribute('stroke-width', width(w));
+        el.setAttribute('opacity', w && Math.abs(w) >= 50 ? '0.7' : '0.25');
+        el.setAttribute('stroke-dasharray', w && Math.abs(w) >= 50 ? '' : '3 6');
+      };
+      const msg = (text) => {
+        const el = document.getElementById('msg');
+        el.hidden = !text;
+        el.textContent = text || '';
+        document.getElementById('flow').style.opacity = text ? '0.35' : '1';
+      };
+
+      async function refresh() {
+        let data;
+        try {
+          data = await Homey.api('GET', '/');
+        } catch (e) {
+          msg(t('widget.error', 'Keine Verbindung zur App'));
+          return;
+        }
+        if (!data.configured) { msg(t('widget.no_device', 'Kein SENEC-Speicher eingerichtet')); return; }
+        const s = data.live;
+        if (!s) { msg(t('widget.no_data', 'Noch keine Messwerte')); return; }
+        msg(data.available ? '' : t('widget.unreachable', 'SENEC nicht erreichbar'));
+
+        set('v-pv', kw(s.pvPower));
+        set('v-bat', kw(s.batteryPower));
+        const batDir = s.batteryPower > 50 ? t('widget.charging', 'lädt') : s.batteryPower < -50 ? t('widget.discharging', 'entlädt') : '';
+        set('s-bat', `${Math.round(s.soc)} %${batDir ? ` · ${batDir}` : ''}`);
+        set('v-grid', kw(s.gridPower));
+        set('s-grid', s.gridPower > 50 ? t('widget.import', 'Bezug') : s.gridPower < -50 ? t('widget.export', 'Einspeisung') : 'kW');
+        set('v-house', kw(s.housePower));
+
+        const wb = s.wallbox;
+        document.getElementById('wb').style.display = wb ? '' : 'none';
+        document.getElementById('l-wb').style.display = wb ? '' : 'none';
+        if (wb) {
+          set('v-wb', kw(wb.power));
+          set('s-wb', wb.connected ? t('widget.ev_connected', 'Auto da') : t('widget.ev_free', 'frei'));
+          line('l-wb', wb.power);
+        }
+        line('l-pv', s.pvPower);
+        line('l-bat', s.batteryPower);
+        line('l-grid', s.gridPower);
+        line('l-house', s.housePower);
+
+        set('c-state', data.charge && data.charge.statusText ? data.charge.statusText : '–');
+        const age = Math.round((Date.now() - s.at) / 1000);
+        const ageEl = document.getElementById('c-age');
+        ageEl.hidden = age < 30;
+        ageEl.textContent = t('widget.age', `vor ${age} s`, { seconds: age });
+      }
+
+      refresh().finally(() => Homey.ready());
+      setInterval(refresh, 5000);
+    }
+  </script>
+</body>
+</html>

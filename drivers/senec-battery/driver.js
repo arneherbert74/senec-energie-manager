@@ -4,8 +4,26 @@ const { Driver } = require('homey');
 
 class SenecDriver extends Driver {
 
-  onInit() {
+  async onInit() {
     this.log('SenecDriver initialized');
+
+    // Flow-Karten: die Schnittstelle zwischen Homey-Flows und der Lade-Sitzung.
+    this.homey.flow.getActionCard('force_charge_start')
+      .registerRunListener(async ({ device, target_soc: targetSoc, max_minutes: maxMinutes }) => {
+        const result = await device.startCharge({ targetSoc, maxMinutes }, 'flow');
+        if (!result.started) throw new Error(this.homey.__(`errors.${result.reason}`));
+      });
+
+    this.homey.flow.getActionCard('force_charge_release')
+      .registerRunListener(async ({ device }) => {
+        const result = await device.releaseCharge();
+        if (!result.released && result.reason === 'fremde_ladung') {
+          throw new Error(this.homey.__('errors.fremde_ladung'));
+        }
+      });
+
+    this.homey.flow.getConditionCard('force_charge_active')
+      .registerRunListener(async ({ device }) => device.isChargeActive());
   }
 
   async onPair(session) {

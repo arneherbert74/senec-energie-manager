@@ -1,0 +1,11 @@
+{
+  "type": "string",
+  "title": {
+    "en": "Grid charging status",
+    "de": "Status Netzladung"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "icon": "/assets/icon.svg"
+}
