@@ -1,23 +1,26 @@
-Monitor and control your SENEC battery storage system directly from Homey.
+Monitor your SENEC battery storage system in Homey and charge it from the grid safely.
 
 Features:
-- Real-time monitoring of battery status, solar production, grid power, and home consumption
-- Force charging control to manually charge your battery from the grid
+- Real-time monitoring of battery, solar production, grid power, home consumption and wallbox
+- Grid charging with a target charge level and a time limit (at most 180 minutes); the app releases the battery automatically
+- Safety first: only charges started by this app are ever stopped, a SENEC safety charge is never touched, a running charge survives app restarts
+- Flow cards: charge from grid to a target, release battery, condition "grid charging is active", trigger "grid charging ended" with reason, charge level and duration
+- Notifications when grid charging starts and ends
+- Dashboard widgets: energy flow and grid charging
 - Energy Tab integration with cumulative energy meters
-- Automatic status updates every 3 seconds via LAN
+- Local LAN connection, updates every 3 seconds
 
 Supported devices:
-- SENEC Battery: Battery charge level, voltage, current, power, and force charging control
-- SENEC Solar/Inverter: Solar power production and cumulative energy generated
-- SENEC Grid Connection: Grid import/export power and cumulative energy meters
-- SENEC Home Consumption: House power consumption and cumulative energy usage
+- SENEC Battery: charge level, voltage, current, power, grid charging switch and status
+- SENEC Solar/Inverter: solar power and energy generated
+- SENEC Grid Connection: grid import/export power and energy
+- SENEC Home Consumption: house power and energy
 
 Requirements:
-- Homey Pro with firmware 12.0 or higher
-- SENEC battery system with network connectivity
-- IP address of your SENEC system
+- Homey Pro with firmware 12.3 or higher
+- SENEC battery system reachable in your local network (do not expose it to the internet)
 
 Setup:
 1. Add the SENEC Battery device and enter the IP address of your SENEC system
-2. Add the Solar, Grid, and Consumption devices for additional monitoring
-3. All devices will automatically start receiving data
+2. Optionally add the Solar, Grid and Consumption devices
+3. Adjust target and maximum duration for the grid charging switch in the device settings
