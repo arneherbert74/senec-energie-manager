@@ -2,7 +2,7 @@
 
 Kontextdatei für Claude Code. Ziel: eine sichere Force-Lade-Steuerung für einen SENEC-Speicher als Homey-Pro-App bauen, aufbauend auf einem bestehenden Open-Source-Projekt.
 
-Stand: 14.11.2026. Alles unter „Verifiziert" ist geprüft — am Quellcode zweier unabhängiger Projekte oder am echten Gerät. Alles unter „Offen" ist es nicht.
+Stand: 14.11.2026, ergänzt 15.11.2026 (Abschnitt 14). Alles unter „Verifiziert" ist geprüft — am Quellcode zweier unabhängiger Projekte oder am echten Gerät. Alles unter „Offen" ist es nicht.
 
 ---
 
@@ -297,9 +297,35 @@ Sinnvolle Erweiterung für die Tests: Ladestand während Force-Laden hochzählen
 - **E-Auto:** Mercedes GLC 400 mit EQ Technology, mit Tibber verbunden; Ladestrom wird über ein Messkabel mit dem Arbeitgeber abgerechnet. Nicht Teil dieser App.
 - **§ 14a EnWG Modul 1** noch nicht angemeldet.
 
-## 13. Erster Schritt in Claude Code
+## 13. Erster Schritt in Claude Code (erledigt)
 
-1. Repo forken und lokal klonen
-2. Diese Datei als `HANDOFF.md` ins Repo-Wurzelverzeichnis legen, `senec_test.py` nach `tools/`
-3. In der vorhandenen `CLAUDE.md` eine Zeile ergänzen: *„Vor der Arbeit `HANDOFF.md` lesen."*
-4. Erst `lib/LalaClient.js` mit Tests, dann `lib/ForceChargeSession.js` mit Tests — bevor irgendetwas an `device.js` geändert wird
+1. ~~Repo forken und lokal klonen~~
+2. ~~Diese Datei als `HANDOFF.md` ins Repo-Wurzelverzeichnis legen, `senec_test.py` nach `tools/`~~
+3. ~~In der vorhandenen `CLAUDE.md` eine Zeile ergänzen~~
+4. ~~Erst `lib/LalaClient.js` mit Tests, dann `lib/ForceChargeSession.js` mit Tests~~
+
+## 14. Stand 15.11.2026 und nächste Schritte
+
+**Entscheidungen seit der Übergabe**
+
+- **Eigene App statt Erweiterung:** „Senec Energie Manager“, App-ID `com.github.arneherbert74.senec-energie-manager`, Repo `arneherbert74/senec-energie-manager` (Fork des Originals, Branch `force-charge-session`). Grund: Der Schalter verhält sich anders als im Original (begrenzt statt unbegrenzt); Nutzer sollen wählen können. Upstream-PR später nur für verhaltensneutrale Teile.
+- **Aufteilung App / Flows:** Die App liest, zeigt an und lädt sicher. Wann geladen wird, entscheiden Homey-Flows mit der Tibber-App (Preise) und PV Forecast (`be.pvforecast`, PV-Prognose). Schwellen als Homey-Variablen. Keine Preis- oder Wetterlogik in der App. Tibber- und SENEC-Schnittstelle liefern keine Wetterdaten.
+- **Fremde Ladungen nie freigeben**, auch nicht auf Wunsch (Abschnitt 7, „Vom Nutzer festgelegt“).
+- PV-Anlage: 8,52 kWp, eine Fläche, Süd, 45°. Am SENEC ist eine Wallbox angemeldet (`WALLBOX`-Felder in `lala.cgi`, Leistung in W).
+- Preis-Widget-Farben (falls A10 gebaut wird): bis 20 ct grün, über 20 bis 40 ct gelb, über 40 ct orange.
+
+**Gebaut** (siehe `README.md`): Speicher-Gerät mit Schalter und Statustext, Flow-Karten, Benachrichtigungen, Warnung bei Freigabefehler, Widgets Energiefluss und Netzladung, Wallbox-Werte, Umstellung auf Homey Compose. 68 Tests, ESLint und `homey app validate --level publish` grün. Gegen den echten SENEC nur lesend geprüft.
+
+**Externe Dokumente**
+
+- Anforderungen (App und Flows): https://claude.ai/artifact/NMEnYorfzvvtgSSZ1W6PXw
+- Design (Dashboard, Gerät, Einstellungen, Flow): https://claude.ai/artifact/LvxefAPYkLPuDBahHqzeUi
+
+**Nächste Schritte**
+
+1. Homey Pro kommt am 16.11.2026: Test nach `TESTANLEITUNG.md` (`homey app run --remote`, abends ohne PV, 2-min-Fristen).
+2. Danach `homey app install`, Branch `force-charge-session` in `main` übernehmen.
+3. Tibber-App und PV Forecast installieren, Variablen und Lade-Flow im Probebetrieb (nur Benachrichtigung) bauen.
+4. Offen: Preis-Widget A10 nur, falls es kein fertiges gibt; prognosebasiertes Laden der SENEC prüfen; Portweiterleitung zum SENEC entfernen.
+
+**Umgebung:** Windows auf ARM64. Homey CLI braucht `sharp@0.34` im globalen `homey`-Ordner (siehe README). Python 3.13 und Node 26 sind installiert.

@@ -6,7 +6,7 @@ Ziel: Die App am echten Homey prüfen, bevor sie dauerhaft installiert wird. Dau
 
 1. **Homey einrichten** und die Firmware aktualisieren. Die App braucht **Homey 12.3 oder neuer** (Einstellungen → Allgemein → Software).
 2. **Portweiterleitung zum SENEC** in der Fritzbox entfernen. `lala.cgi` hat keine Anmeldung.
-3. Im Terminal im Ordner `senec-connector`:
+3. Im Terminal im Ordner `senec-energie-manager`:
 
    ```
    homey login
