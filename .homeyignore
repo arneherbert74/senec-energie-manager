@@ -3,3 +3,6 @@ CODE_OF_CONDUCT.md
 CLAUDE.md
 .eslintrc.json
 .github/
+HANDOFF.md
+test/
+tools/
