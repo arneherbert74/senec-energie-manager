@@ -75,7 +75,9 @@ describe('LalaClient gegen Mock', () => {
   test('HTTPS mit selbstsigniertem Zertifikat', async (t) => {
     const mock = await startMockSenec({ tls: true });
     const client = new LalaClient({ host: '127.0.0.1', port: mock.port });
-    t.after(async () => { client.destroy(); await mock.close(); });
+    t.after(async () => {
+      client.destroy(); await mock.close();
+    });
 
     const s = await client.readStatus();
     assert.equal(client.scheme, 'https');
@@ -89,7 +91,9 @@ describe('LalaClient gegen Mock', () => {
   test('HTTP als Rueckfall, Schema wird gemerkt', async (t) => {
     const mock = await startMockSenec({ tls: false });
     const client = new LalaClient({ host: '127.0.0.1', port: mock.port });
-    t.after(async () => { client.destroy(); await mock.close(); });
+    t.after(async () => {
+      client.destroy(); await mock.close();
+    });
 
     await client.readForceState();
     assert.equal(client.scheme, 'http');
@@ -100,7 +104,9 @@ describe('LalaClient gegen Mock', () => {
   test('Header und Body wie am Geraet getestet', async (t) => {
     const mock = await startMockSenec({ tls: true });
     const client = new LalaClient({ host: '127.0.0.1', port: mock.port });
-    t.after(async () => { client.destroy(); await mock.close(); });
+    t.after(async () => {
+      client.destroy(); await mock.close();
+    });
 
     await client.startForceCharge();
     const [post] = mock.state.posts;
@@ -115,7 +121,9 @@ describe('LalaClient gegen Mock', () => {
   test('Start und Freigabe schalten den Zustand', async (t) => {
     const mock = await startMockSenec({ tls: true });
     const client = new LalaClient({ host: '127.0.0.1', port: mock.port });
-    t.after(async () => { client.destroy(); await mock.close(); });
+    t.after(async () => {
+      client.destroy(); await mock.close();
+    });
 
     await client.startForceCharge();
     assert.equal((await client.readForceState()).running, true);
@@ -129,7 +137,9 @@ describe('LalaClient gegen Mock', () => {
   test('Requests werden serialisiert', async (t) => {
     const mock = await startMockSenec({ tls: false, delayMs: 30 });
     const client = new LalaClient({ host: '127.0.0.1', port: mock.port, schemes: ['http'] });
-    t.after(async () => { client.destroy(); await mock.close(); });
+    t.after(async () => {
+      client.destroy(); await mock.close();
+    });
 
     await Promise.all([
       client.readStatus(), client.readForceState(), client.startForceCharge(), client.readStatus(),
@@ -142,7 +152,9 @@ describe('LalaClient gegen Mock', () => {
   test('ein Fehler blockiert die Warteschlange nicht', async (t) => {
     const mock = await startMockSenec({ tls: false, failNext: 1 });
     const client = new LalaClient({ host: '127.0.0.1', port: mock.port, schemes: ['http'] });
-    t.after(async () => { client.destroy(); await mock.close(); });
+    t.after(async () => {
+      client.destroy(); await mock.close();
+    });
 
     const [first, second] = await Promise.allSettled([client.readStatus(), client.readStatus()]);
     assert.equal(first.status, 'rejected');
@@ -156,7 +168,9 @@ describe('LalaClient gegen Mock', () => {
     const client = new LalaClient({
       host: '127.0.0.1', port: mock.port, schemes: ['http'], timeoutMs: 150,
     });
-    t.after(async () => { client.destroy(); await mock.close(); });
+    t.after(async () => {
+      client.destroy(); await mock.close();
+    });
 
     await assert.rejects(client.readStatus(), /Timeout nach 150 ms/);
   });
@@ -172,7 +186,9 @@ describe('LalaClient gegen Mock', () => {
   test('unbekannte Felder kommen als VARIABLE_NOT_FOUND zurueck', async (t) => {
     const mock = await startMockSenec({ tls: false });
     const client = new LalaClient({ host: '127.0.0.1', port: mock.port, schemes: ['http'] });
-    t.after(async () => { client.destroy(); await mock.close(); });
+    t.after(async () => {
+      client.destroy(); await mock.close();
+    });
 
     const res = await client.post({ ENERGY: { GIBT_ES_NICHT: '' } });
     assert.equal(res.ENERGY.GIBT_ES_NICHT, 'VARIABLE_NOT_FOUND');

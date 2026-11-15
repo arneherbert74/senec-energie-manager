@@ -66,7 +66,9 @@ async function startMockSenec(opts = {}) {
     }
     let body = '';
     req.setEncoding('utf8');
-    req.on('data', (c) => { body += c; });
+    req.on('data', (c) => {
+      body += c;
+    });
     req.on('end', () => {
       state.inFlight++;
       state.maxInFlight = Math.max(state.maxInFlight, state.inFlight);
@@ -112,9 +114,13 @@ async function startMockSenec(opts = {}) {
     port,
     state,
     /** Speicher beendet Force-Laden von sich aus. */
-    stopBySystem() { state.safe = 0; },
+    stopBySystem() {
+      state.safe = 0;
+    },
     /** Speicher startet eine eigene Sicherheitsladung (Status 25). */
-    startBySystem() { state.safe = 1; state.statOverride = 25; },
+    startBySystem() {
+      state.safe = 1; state.statOverride = 25;
+    },
     close() {
       server.closeAllConnections?.();
       return new Promise((resolve) => server.close(resolve));
