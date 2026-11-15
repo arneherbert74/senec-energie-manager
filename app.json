@@ -35,7 +35,7 @@
       }
     ]
   },
-  "source": "https://github.com/arneherbert74/senec-connector",
+  "source": "https://github.com/arneherbert74/senec-energie-manager",
   "flow": {
     "triggers": [
       {
