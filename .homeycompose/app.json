@@ -1,18 +1,18 @@
 {
-  "id": "com.github.dbone29.senec-connector",
-  "version": "1.1.0",
+  "id": "com.github.arneherbert74.senec-energie-manager",
+  "version": "1.0.0",
   "compatibility": ">=12.3.0",
   "sdk": 3,
   "platforms": [
     "local"
   ],
   "name": {
-    "en": "Senec Connector",
-    "de": "Senec Connector"
+    "en": "Senec Energie Manager",
+    "de": "Senec Energie Manager"
   },
   "description": {
-    "en": "Adds support for Senec batteries.",
-    "de": "Fügt Unterstützung für Senec-Batterien hinzu."
+    "en": "Monitor your SENEC battery and charge it from the grid safely.",
+    "de": "SENEC-Speicher überwachen und sicher aus dem Netz laden."
   },
   "category": [
     "energy"
@@ -25,7 +25,14 @@
     "xlarge": "/assets/images/xlarge-battery-ai.png"
   },
   "author": {
-    "name": "Daniel Busenius",
-    "email": "info@daniel-b.de"
-  }
+    "name": "arneherbert74"
+  },
+  "contributors": {
+    "developers": [
+      {
+        "name": "Daniel Busenius (Senec Connector, Grundlage dieser App)"
+      }
+    ]
+  },
+  "source": "https://github.com/arneherbert74/senec-connector"
 }

@@ -1,8 +1,10 @@
-# Senec Connector – mit sicherer Netzladung
+# Senec Energie Manager
 
 Homey-App für SENEC-Speicher. Sie zeigt PV, Speicher, Hausverbrauch, Netz und Wallbox in Homey und lädt den Speicher auf Wunsch aus dem Netz, immer mit Ladeziel, Zeitlimit und Sicherungen.
 
-Fork von [Dbone29/senec-connector](https://github.com/Dbone29/senec-connector) (MIT). Neu in diesem Fork: sichere Netzladung, Flow-Karten, Benachrichtigungen, Dashboard-Widgets und Wallbox-Werte.
+Eigenständige App auf Basis von [Senec Connector](https://github.com/Dbone29/senec-connector) von Daniel Busenius (MIT). Sie hat eine eigene App-ID und läuft unabhängig vom Original. Neu gegenüber dem Original: sichere Netzladung, Flow-Karten, Benachrichtigungen, Dashboard-Widgets und Wallbox-Werte.
+
+**Unterschied zum Original:** Dort lädt der Schalter unbegrenzt aus dem Netz, bis jemand ihn ausschaltet. Hier endet jede Ladung bei Ziel oder Höchstdauer. Wer nur Werte sehen will, kann beim Original bleiben.
 
 > **Status:** Mit 68 automatischen Tests und gegen einen echten SENEC.Home V3 (nur lesend) geprüft. Der Test am echten Homey steht noch aus, siehe [TESTANLEITUNG.md](TESTANLEITUNG.md).
 
@@ -142,4 +144,4 @@ Das Protokoll der `lala.cgi` stammt aus [marq24/ha-senec-v3](https://github.com/
 
 ## Lizenz
 
-MIT, siehe [LICENSE](LICENSE). Original von Daniel Busenius.
+MIT, siehe [LICENSE](LICENSE). Grundlage: Senec Connector von Daniel Busenius.

@@ -14,7 +14,7 @@ Ziel: Die App am echten Homey prüfen, bevor sie dauerhaft installiert wird. Dau
    ```
 
    `homey select` fragt, welcher Homey genutzt wird.
-4. Ist die Store-App „Senec Connector“ installiert, wird sie durch diese Version ersetzt (gleiche App-ID). Geräte bleiben erhalten.
+4. Die App heißt „Senec Energie Manager“ und hat eine eigene App-ID. Sie läuft unabhängig von der Store-App „Senec Connector“. Ist diese installiert, besser entfernen, damit der Speicher nicht doppelt abgefragt wird.
 
 ## Starten
 
@@ -53,7 +53,7 @@ Die App bleibt dann installiert, auch ohne Terminal.
 | # | Schritt | Erwartet |
 |---|---|---|
 | 12 | Höchstdauer 5 min, Schalter an | Ladung läuft |
-| 13 | Homey-App → Einstellungen → Apps → Senec Connector → **Neu starten** | Ladung wird beim Beenden freigegeben, nach dem Start Status „Bereit“ |
+| 13 | Homey-App → Einstellungen → Apps → Senec Energie Manager → **Neu starten** | Ladung wird beim Beenden freigegeben, nach dem Start Status „Bereit“ |
 | 14 | Schalter an, dann den **Homey neu starten** (Strom kurz weg) | Nach dem Hochfahren: Frist noch nicht um → Ladung läuft weiter. Frist um → Freigabe, Grund „Nach Neustart der App beendet“ |
 
 ## Notfall
