@@ -283,8 +283,8 @@ Sinnvolle Erweiterung für die Tests: Ladestand während Force-Laden hochzählen
 |---|---|
 | ~~Hat das Skript nach 10 min freigegeben oder der SENEC selbst?~~ **Geklärt 15.11.2026: Das Skript hat freigegeben** (Auto-Stopp). Wie lange der SENEC ohne Freigabe von sich aus lädt, ist weiter unbekannt. | Sicherung 7 bleibt nötig, greift aber vermutlich selten |
 | Was macht der SENEC, wenn er im Force-Laden voll wird — bleibt `SAFE_CHARGE_RUNNING` auf 1? Geht der Status auf 9? | Bestimmt, ob er danach das Haus wieder versorgt, ohne dass wir freigeben |
-| Netzbezug im Force-Laden noch nicht abends ohne PV bestätigt | Eindeutiger Beweis, dass aus dem Netz geladen wird |
-| Firmware-Version des V3 | Für die Doku und falls sich das Protokoll unterscheidet |
+| ~~Netzbezug im Force-Laden abends ohne PV~~ **Bestätigt 22.11.2026** am Homey-Test: Netzbezug sichtbar | – |
+| ~~Firmware-Version des V3~~ **842** (Stand 22.11.2026) | Für die Doku und falls sich das Protokoll unterscheidet |
 | IP des SENEC | Vom Nutzer erfragen, **nicht** ins Repo |
 | Später als Pull Request an das Original zurückgeben? | Erst wenn es stabil läuft |
 
