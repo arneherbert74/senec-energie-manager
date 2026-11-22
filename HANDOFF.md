@@ -323,7 +323,7 @@ Sinnvolle Erweiterung für die Tests: Ladestand während Force-Laden hochzählen
 
 **Nächste Schritte**
 
-1. Homey Pro kommt am 16.11.2026: Test nach `TESTANLEITUNG.md` (`homey app run --remote`, abends ohne PV, 2-min-Fristen).
+1. ~~Test am Homey Pro nach `TESTANLEITUNG.md`~~ — **erledigt 22.11.2026**, Tests 1–14 bestanden. Widget „Netzladung“ passt seine Höhe jetzt dem Inhalt an (war bei 300 px abgeschnitten). PowerShell: `homey.cmd` nutzen oder `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
 2. Danach `homey app install`, Branch `force-charge-session` in `main` übernehmen.
 3. Tibber-App und PV Forecast installieren, Variablen und Lade-Flow im Probebetrieb (nur Benachrichtigung) bauen.
 4. Offen: Preis-Widget A10 nur, falls es kein fertiges gibt; prognosebasiertes Laden der SENEC prüfen; Portweiterleitung zum SENEC entfernen.

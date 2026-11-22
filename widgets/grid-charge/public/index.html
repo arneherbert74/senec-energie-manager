@@ -91,7 +91,20 @@
         if (!$('note').classList.contains('err') && !armed) {
           note(c.foreignActive ? t('errors.fremde_ladung', 'Der SENEC lädt selbst.') : (c.warning || ''), !!c.warning);
         }
+        fitHeight();
       }
+
+      // Hoehe an den Inhalt anpassen: Buttons und Hinweis brechen je nach Breite um.
+      let lastHeight = 0;
+      function fitHeight() {
+        const pad = parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+        const h = Math.ceil(document.querySelector('.wrap').getBoundingClientRect().bottom + pad);
+        if (h !== lastHeight && typeof Homey.setHeight === 'function') {
+          lastHeight = h;
+          Homey.setHeight(h);
+        }
+      }
+      window.addEventListener('resize', fitHeight);
 
       async function refresh() {
         try {
@@ -135,7 +148,11 @@
         await refresh();
       });
 
-      refresh().finally(() => Homey.ready());
+      refresh().finally(() => {
+        Homey.ready();
+        lastHeight = 0;
+        fitHeight();
+      });
       setInterval(refresh, 5000);
     }
   </script>
